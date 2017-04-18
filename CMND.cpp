@@ -139,10 +139,10 @@ void CMND::send_message(vector<uint8_t>* msg)
 	while (!ule->writeable());
 
 	ostringstream ss;
-	log("Writing message:");
+	// log("Writing message:");
 	for(int i=0; i<msg->size(); i++)
 	ss << setfill('0') << setw(2) << hex << (int)(*msg)[i] << " ";
-	log(ss.str());
+	// log(ss.str());
 
 	for(int i=0; i<msg->size(); i++)
 	ule->putc((*msg)[i]);
@@ -212,10 +212,10 @@ CMND::InputState CMND::next_input_state()
 			bytes_to_read--;
 			if(bytes_to_read==0) {
 				ostringstream ss;
-				log("Got message:");
+				//log("Got message:");
 				for(int i=0; i<message_bytes->size(); i++)
-				ss << setfill('0') << setw(2) << hex << (int)(*message_bytes)[i] << " ";
-				log(ss.str());
+					ss << setfill('0') << setw(2) << hex << (int)(*message_bytes)[i] << " ";
+				//log(ss.str());
 
 				Frame* frame = Frame::deserialize(message_bytes,log);
 				delete message_bytes;
@@ -424,11 +424,12 @@ CMND::MessageState CMND::next_message_state(Frame* message)
 	case PARAM_SET_RES:
 		{
 			// Message ID validation
-			if(message->get_message_id() != Frame::CMND_MSG_PARAM_SET_RES) {
+			if(message->get_message_id() != Frame::CMND_MSG_PARAM_SET_RES)
+			{
 				if(message->get_message_id() == Frame::CMND_MSG_GENERAL_ERROR_IND)
-				report("In state PARAM_SET_RES Parameter error",false);
+					report("In state PARAM_SET_RES Parameter error - CMND_MSG_GENERAL_ERROR_IND",false);
 				else
-				report("In state PARAM_SET_RES message id isn't CMND_MSG_PARAM_SET_RES",false);
+					report("In state PARAM_SET_RES message id isn't CMND_MSG_PARAM_SET_RES",false);
 				res = CMND::START;
 				break;
 			}
@@ -788,7 +789,8 @@ void CMND::onoff_switch()
 	delete frame;
 }
 
-void CMND::onoff_switch(bool on){
+void CMND::onoff_switch(bool on)
+{
 	if(on)
 		log("SENDING: ON_OFF->CMND_MSG_ONOFF_ON_REQ");
 	else
@@ -800,7 +802,7 @@ void CMND::onoff_switch(bool on){
 	vector<IE*>* vec = new vector<IE*>();
 	IE* ie = new IEResponseRequired();
 	vec->push_back(ie);
-	Frame* frame = new Frame(0x00,0x00,
+	Frame* frame = new Frame(0x00,0x01,
 			Frame::ON_OFF,
 			(on?Frame::CMND_MSG_ONOFF_ON_REQ:Frame::CMND_MSG_ONOFF_OFF_REQ),
 			vec);

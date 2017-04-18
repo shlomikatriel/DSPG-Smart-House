@@ -47,7 +47,7 @@ void pressed()
     if(0<=i && i<10) 
     {
         log("User button pressed for 0 to 1 second. action - on/off");
-        cmnd.onoff_switch();
+        cmnd.onoff_switch(true);
     } else if(10<=i && i<30)
     {
 		 log("User button pressed for 1 to 3 second. action - tamper alert");
@@ -59,7 +59,6 @@ void pressed()
     }
     log("END pressed()");
 }
-
 
 void tamper()
 {
