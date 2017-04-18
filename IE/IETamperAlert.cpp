@@ -13,7 +13,7 @@ IETamperAlert::IETamperAlert(bool status_on)
 
 uint8_t IETamperAlert::calculate_ie_checksum()
 {
-	uint64_t checksum = type_id + calculate_ie_length() + status_on?0x1:0x0;
+	uint64_t checksum = type_id + calculate_ie_length() + (status_on?0x1:0x0);
 	return checksum;
 }
 

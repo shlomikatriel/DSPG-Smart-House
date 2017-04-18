@@ -485,15 +485,17 @@ CMND::MessageState CMND::next_message_state(Frame* message)
 				break;
 			}
 			// Message ID validation
-			if(message->get_message_id() != Frame::CMND_MSG_ONOFF_TOGGLE_RES) 
+			if(message->get_message_id() != Frame::CMND_MSG_ONOFF_TOGGLE_RES
+				&& message->get_message_id() != Frame::CMND_MSG_ONOFF_ON_RES
+				&& message->get_message_id() != Frame::CMND_MSG_ONOFF_OFF_RES) 
 			{
-				report("State ONOFF_SWITCH: Message id isn't CMND_MSG_ONOFF_TOGGLE_RES",false);
+				report("State ONOFF_SWITCH: Message id isn't CMND_MSG_ONOFF_TOGGLE/ON/OFF_RES",false);
 				break;
 			}
 			// 1 IE validation
 			if(message->get_ie_vector()->size()!=1) 
 			{
-				report("State ONOFF_SWITCH: CMND_MSG_ONOFF_TOGGLE_RES doesn't have 1 IE",false);
+				report("State ONOFF_SWITCH: CMND_MSG_ONOFF_TOGGLE/ON/OFF_RES doesn't have 1 IE",false);
 				break;
 			}
 			// IE type validation
@@ -779,6 +781,29 @@ void CMND::onoff_switch()
 		Frame::ON_OFF,
 		Frame::CMND_MSG_ONOFF_TOGGLE_REQ,
 		vec);
+	
+	vector<uint8_t>* onoff = frame->serialize();
+	send_message(onoff);
+	delete onoff;
+	delete frame;
+}
+
+void CMND::onoff_switch(bool on){
+	if(on)
+		log("SENDING: ON_OFF->CMND_MSG_ONOFF_ON_REQ");
+	else
+		log("SENDING: ON_OFF->CMND_MSG_ONOFF_OFF_REQ");
+	if(current_message_state != CMND::START)
+		report("On/Off switch failed, another process is in progress",false);
+	current_message_state = CMND::ONOFF_SWITCH;
+	
+	vector<IE*>* vec = new vector<IE*>();
+	IE* ie = new IEResponseRequired();
+	vec->push_back(ie);
+	Frame* frame = new Frame(0x00,0x00,
+			Frame::ON_OFF,
+			(on?Frame::CMND_MSG_ONOFF_ON_REQ:Frame::CMND_MSG_ONOFF_OFF_REQ),
+			vec);
 	
 	vector<uint8_t>* onoff = frame->serialize();
 	send_message(onoff);

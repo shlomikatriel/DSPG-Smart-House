@@ -81,6 +81,7 @@ class CMND
         void start();
         void register_device();
 		void onoff_switch();
+		void onoff_switch(bool on);
 		void set_switchable_toggle_callback(bool (*switchable_toggle)());
 		void send_tamper_alert(bool status_on);
 };
