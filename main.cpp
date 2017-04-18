@@ -8,7 +8,7 @@
 using namespace std;
 
 DigitalOut led(LED1);
-
+// Shlomi change
 // UART1(PA_9,PA_10)    UART2(PA_2,PA_3)    UART6(PC_6,PC_7)
 Serial ule(PA_9,PA_10);
 Serial pc(USBTX, USBRX);
