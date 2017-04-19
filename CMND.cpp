@@ -62,7 +62,7 @@ void CMND::start()
 	log("Going to sleep");
 	while(1) {
 		while(uart_active)
-		current_input_state = next_input_state();
+			current_input_state = next_input_state();
 		sleep();
 	}
 }
@@ -159,7 +159,7 @@ void CMND::get_byte()
 CMND::InputState CMND::next_input_state()
 {
 	if(input_buffer->empty())
-	return current_input_state;
+		return current_input_state;
 
 	uint8_t b = input_buffer->front();
 	input_buffer->pop();
@@ -440,6 +440,7 @@ CMND::MessageState CMND::next_message_state(Frame* message)
 				res = CMND::START;
 				break;
 			}
+			
 			// IE type validation
 			IE* ie1 = (*(message->get_ie_vector()))[0];
 			IE* ie2 = (*(message->get_ie_vector()))[1];
@@ -461,10 +462,12 @@ CMND::MessageState CMND::next_message_state(Frame* message)
 				ss << "Parameter id #" << (int)parameter_id <<"(decimal) is set";
 				report(ss.str(),true);
 			}
+			
 			if(parameter_buffer->empty()) {
 				res = CMND::START;
 				break;
 			}
+			
 			vector<uint8_t>* msg = parameter_buffer->front();
 			parameter_buffer->pop();
 			send_message(msg);
@@ -730,8 +733,11 @@ void CMND::initialize_EEPROM()
 	parameter_buffer->push(ule_gpio);
 
 	current_message_state = CMND::PARAM_SET_RES;
+	
+	
 	vector<uint8_t>* vec = parameter_buffer->front();
 	parameter_buffer->pop();
+	
 	send_message(vec);
 	delete vec;
 	/*
